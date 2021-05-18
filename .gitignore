@@ -1,0 +1,5 @@
+.qmake.*
+.vscode/**
+Makefile
+gui
+*.o
