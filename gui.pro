@@ -1,7 +1,12 @@
 CONFIG += debug
-SOURCES += gui.cpp
-TARGET = gui
+QT += core gui
+QT += widgets
+requires(qtConfig(combobox))
 
-QT = core gui
-
-greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
+HEADERS       = renderarea.h \
+                window.h \
+                beziercurve.h
+SOURCES       = gui.cpp \
+                renderarea.cpp \
+                window.cpp \
+                beziercurve.cpp
