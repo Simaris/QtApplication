@@ -4,7 +4,6 @@
 #include <QPainter>
 #include <QPainterPath>
 
-//! [0]
 RenderArea::RenderArea(QWidget *parent)
     : QWidget(parent)
 {
@@ -13,31 +12,23 @@ RenderArea::RenderArea(QWidget *parent)
     setBackgroundRole(QPalette::Base);
     setAutoFillBackground(true);
 }
-//! [0]
 
-//! [1]
 QSize RenderArea::minimumSizeHint() const
 {
     return QSize(100, 100);
 }
-//! [1]
 
-//! [2]
 QSize RenderArea::sizeHint() const
 {
     return QSize(400, 200);
 }
-//! [2]
 
-//! [4]
 void RenderArea::setPen(const QPen &pen)
 {
     this->pen = pen;
     update();
 }
-//! [4]
 
-//! [8]
 void RenderArea::paintEvent(QPaintEvent * /* event */)
 {
     static const QPoint points[6] = {
@@ -57,51 +48,52 @@ void RenderArea::paintEvent(QPaintEvent * /* event */)
         QPoint(95, 100)
     };
 
+    static const QPoint bar[2] = {
+        QPoint(0, 0),
+        QPoint(0, 100)
+    };
+
+    const int offset = 10;
+
     QRect rect(10, 20, 80, 60);
 
-    int startAngle = 20 * 16;
-    int arcLength = 120 * 16;
-//! [8]
-
-//! [9]
     QPainter painter(this);
     painter.setPen(pen);
-//! [9]
 
-//! [10]
-//    for (int x = 0; x < width(); x += 100) {
-//        for (int y = 0; y < height(); y += 100) {
-//            painter.save();
-//            painter.translate(x, y);
-////! [10]
-//
-////! [12]
-//            //if(false){
-//                painter.drawPolygon(points, 4);
-//            //}
-//            //else{
-//                painter.drawArc(rect, startAngle, arcLength);
-//            //}
-////! [12] //! [13]
-//            painter.restore();
-//        }
-//    }
-
+    int queryPointX = 50;
+    int queryPointY;
     int lastX = points[0].x();
     int lastY = points[0].y();
     BezierCurve bezierCurve(&painter, points, handlers);
     for(int x = 0; x <= 100; x++){
         painter.save();
-        painter.translate(0, 100);
+        painter.translate(offset, offset);
         painter.drawLine(lastX, lastY, x, bezierCurve.GetCurvePoint(x));
+
         lastX = x;
         lastY = bezierCurve.GetCurvePoint(x);
+        if(queryPointX == x){
+            queryPointY = lastY;
+        }
         painter.restore();
     }
 
-    painter.setRenderHint(QPainter::Antialiasing, false);
-    painter.setPen(palette().dark().color());
-    painter.setBrush(Qt::NoBrush);
-    painter.drawRect(QRect(0, 0, width() - 1, height() - 1));
+    // paint side bar
+    painter.save();
+    painter.translate(offset + 150, offset + 0);
+    painter.drawLine(bar[0], bar[1]);
+    painter.restore();
+
+    Qt::PenCapStyle cap = Qt::PenCapStyle(Qt::RoundCap);
+    Qt::PenStyle style = Qt::PenStyle(Qt::SolidLine);
+    Qt::PenJoinStyle join = Qt::PenJoinStyle(Qt::MiterJoin);
+    painter.setPen(QPen(Qt::blue, 10, style, cap, join));
+    painter.save();
+    painter.translate(offset + 150, offset);
+    painter.drawPoint(0, queryPointY);
+    painter.restore();
+    painter.save();
+    painter.translate(offset, offset);
+    painter.drawPoint(queryPointX, queryPointY);
+    painter.restore();
 }
-//! [13]
