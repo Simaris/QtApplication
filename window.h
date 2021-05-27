@@ -13,9 +13,6 @@ class Window : public QWidget
 public:
     Window();
 
-private slots:
-    void tick();
-
 private:
     RenderArea *renderArea;
 };

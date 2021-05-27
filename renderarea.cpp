@@ -3,13 +3,18 @@
 
 #include <QPainter>
 #include <QPainterPath>
-//#include <chrono>
+#include <QTime>
+#include <QTimer>
+#include <iostream>
 
 RenderArea::RenderArea(QWidget *parent)
     : QWidget(parent)
 {
     setBackgroundRole(QPalette::Base);
     setAutoFillBackground(true);
+    QTimer *timer = new QTimer(this);
+    connect(timer, &QTimer::timeout, this, QOverload<>::of(&RenderArea::update));
+    timer->start(100);
 }
 
 QSize RenderArea::minimumSizeHint() const
@@ -53,9 +58,9 @@ void RenderArea::paintEvent(QPaintEvent * /* event */)
     QPainter painter(this);
     painter.setPen(pen);
 
-    int queryPointX = 50;
+    // draw bezier line and (on the side) calculate y value on the bezier line
     int queryPointY;
-    int lastX = points[0].x();
+    int lastX = points[0].x();  // cache for position from last iteration
     int lastY = points[0].y();
     BezierCurve bezierCurve(&painter, points, handlers);
     for(int x = 0; x <= 100; x++){
@@ -65,7 +70,7 @@ void RenderArea::paintEvent(QPaintEvent * /* event */)
 
         lastX = x;
         lastY = bezierCurve.GetCurvePoint(x);
-        if(queryPointX == x){
+        if(step == x){
             queryPointY = lastY;
         }
         painter.restore();
@@ -87,6 +92,8 @@ void RenderArea::paintEvent(QPaintEvent * /* event */)
     painter.restore();
     painter.save();
     painter.translate(offset, offset);
-    painter.drawPoint(queryPointX, queryPointY);
+    painter.drawPoint(step, queryPointY);
     painter.restore();
+    step += stepSize;
+    step = std::min(step, 100);
 }

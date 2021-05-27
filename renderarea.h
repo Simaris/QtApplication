@@ -16,9 +16,9 @@ public:
                  Chord, Pie, Path, Text, Pixmap };
 
     explicit RenderArea(QWidget *parent = nullptr);
-
     QSize minimumSizeHint() const override;
     QSize sizeHint() const override;
+    int stepSize = 1;
 
 //public slots:
 //    void setPen(const QPen &pen);
@@ -29,6 +29,7 @@ protected:
 private:
     Shape shape;
     QPen pen;
+    int step = 0;
 };
 //! [0]
 
