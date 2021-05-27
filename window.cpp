@@ -20,6 +20,6 @@ Window::Window()
     mainLayout->setColumnStretch(3, 1);
     mainLayout->addWidget(renderArea, 0, 0, 1, 4);
     setLayout(mainLayout);
-    setWindowTitle(tr("Basic Drawing"));
+    setWindowTitle(tr("QT Gui"));
 }
 //! [10]

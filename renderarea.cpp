@@ -3,12 +3,11 @@
 
 #include <QPainter>
 #include <QPainterPath>
+//#include <chrono>
 
 RenderArea::RenderArea(QWidget *parent)
     : QWidget(parent)
 {
-    shape = Polygon;
-
     setBackgroundRole(QPalette::Base);
     setAutoFillBackground(true);
 }
@@ -21,12 +20,6 @@ QSize RenderArea::minimumSizeHint() const
 QSize RenderArea::sizeHint() const
 {
     return QSize(400, 200);
-}
-
-void RenderArea::setPen(const QPen &pen)
-{
-    this->pen = pen;
-    update();
 }
 
 void RenderArea::paintEvent(QPaintEvent * /* event */)

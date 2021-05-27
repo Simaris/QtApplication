@@ -20,8 +20,8 @@ public:
     QSize minimumSizeHint() const override;
     QSize sizeHint() const override;
 
-public slots:
-    void setPen(const QPen &pen);
+//public slots:
+//    void setPen(const QPen &pen);
 
 protected:
     void paintEvent(QPaintEvent *event) override;
