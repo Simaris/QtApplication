@@ -6,15 +6,16 @@
 #include <QTime>
 #include <QTimer>
 #include <iostream>
+#include <QMouseEvent>
 
 RenderArea::RenderArea(QWidget *parent)
     : QWidget(parent)
 {
     setBackgroundRole(QPalette::Base);
     setAutoFillBackground(true);
-    QTimer *timer = new QTimer(this);
-    connect(timer, &QTimer::timeout, this, QOverload<>::of(&RenderArea::update));
-    timer->start(100);
+    // QTimer *timer = new QTimer(this);
+    // connect(timer, &QTimer::timeout, this, QOverload<>::of(&RenderArea::update));
+    // timer->start(100);
 }
 
 QSize RenderArea::minimumSizeHint() const
@@ -25,6 +26,19 @@ QSize RenderArea::minimumSizeHint() const
 QSize RenderArea::sizeHint() const
 {
     return QSize(400, 200);
+}
+
+void RenderArea::mousePressEvent(QMouseEvent *){
+    this->setMouseTracking(true);
+}
+
+void RenderArea::mouseMoveEvent(QMouseEvent *event){
+    step = event->pos().x();
+    this->update();
+}
+
+void RenderArea::mouseReleaseEvent(QMouseEvent *){
+    this->setMouseTracking(false);
 }
 
 void RenderArea::paintEvent(QPaintEvent * /* event */)
@@ -52,9 +66,6 @@ void RenderArea::paintEvent(QPaintEvent * /* event */)
     };
 
     const int offset = 10;
-
-    QRect rect(10, 20, 80, 60);
-
     QPainter painter(this);
     painter.setPen(pen);
 
@@ -94,6 +105,6 @@ void RenderArea::paintEvent(QPaintEvent * /* event */)
     painter.translate(offset, offset);
     painter.drawPoint(step, queryPointY);
     painter.restore();
-    step += stepSize;
+    //step += stepSize;
     step = std::min(step, 100);
 }

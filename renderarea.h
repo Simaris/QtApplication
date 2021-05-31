@@ -20,11 +20,11 @@ public:
     QSize sizeHint() const override;
     int stepSize = 1;
 
-//public slots:
-//    void setPen(const QPen &pen);
-
 protected:
     void paintEvent(QPaintEvent *event) override;
+    void mousePressEvent(QMouseEvent *event) override;
+    void mouseMoveEvent(QMouseEvent *event) override;
+    void mouseReleaseEvent(QMouseEvent *event) override;
 
 private:
     Shape shape;
