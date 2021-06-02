@@ -1,4 +1,7 @@
+#pragma once
 #include <stdlib.h>
+#include <vector>
+#include <algorithm>
 
 
 /// todo:
@@ -10,31 +13,49 @@ enum class RangeRoll{
     Null
 };
 
+template<typename T>
 struct Range{
     float start;
     float end;
     RangeRoll roll;
+    T payload;
+    Range() = delete;
+    Range(float start, float end, RangeRoll roll){
+        this->start = start;
+        this->end = end;
+        this->roll = roll;
+    }
+    Range(float start, float end, RangeRoll roll, T payload){
+        this->start = start;
+        this->end = end;
+        this->roll = roll;
+        this->payload = payload;
+    }
 };
 
+template<typename T>
 class RangeLookUpStatic {
     private:
     int numOfCells;
     float min;
     float max;
     float stepSize;
-    Range* nullRange;
-    Range*** ranges;  // [[Range* , Range*], ... ]
+    std::vector<Range<T>> rangePile;
+    Range<T>* nullRange;
+    Range<T>*** ranges;  // [[Range* , Range*], ... ]
 
     public:
     RangeLookUpStatic() = delete;
     RangeLookUpStatic(int numOfCells, float min, float max);
     ~RangeLookUpStatic();
-    bool AddRange(Range*);
+    bool AddRange(float, float, T);
     bool Contains(float value);
-    Range& operator [](float value);
+    Range<T>& operator [](float value);
 
     private:
     int calculateIndex(float value){
-        return (value - min) / stepSize;
+        return std::min((int)((value - min) / stepSize), numOfCells - 1);  //min(..., numOfCells - 1) the index for max value needs to be covered
     }
 };
+
+#include "RangeLookUpStatic.cpp"
