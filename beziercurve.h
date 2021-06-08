@@ -9,7 +9,7 @@ class BezierCurve {
         const QPoint* handlers;
         int numOfPoints;
         int cache;
-        RangeLookUpStatic<std::tuple<QPoint, QPoint>> rangeHandler;
+        RangeLookUpStatic<std::tuple<QPoint, QPoint, QPoint>> rangeHandler;
 
     public:
         BezierCurve(QPainter* mpainter, const QPoint mpoints[], const QPoint mhandlers[]);

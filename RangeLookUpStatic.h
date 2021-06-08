@@ -40,7 +40,7 @@ class RangeLookUpStatic {
     float min;
     float max;
     float stepSize;
-    std::vector<Range<T>> rangePile;
+    std::vector<Range<T>*> rangePile;
     Range<T>* nullRange;
     Range<T>*** ranges;  // [[Range* , Range*], ... ]
 

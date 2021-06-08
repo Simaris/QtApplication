@@ -23,20 +23,23 @@ RangeLookUpStatic<T>::~RangeLookUpStatic(){
         free(this->ranges[i]);
     }
     delete this->ranges;
+    delete this->nullRange;
+    for(const Range<T>* range : this->rangePile){
+        delete range;
+    }
 }
 
 template<typename T>
 bool RangeLookUpStatic<T>::AddRange(float xA, float xB, T payload){
-    Range<T> range = Range<T>(xA, xB, RangeRoll::Normal, payload);
+    Range<T>* range = new Range<T>(xA, xB, RangeRoll::Normal, payload);
     rangePile.push_back(range);
-    int start = calculateIndex(range.start);
-    int end = calculateIndex(range.end);
-    Range<T>* rangePointer = &rangePile.back();
-    this->ranges[start][1] = rangePointer;
-    this->ranges[end][0] = rangePointer;
+    int start = calculateIndex(range->start);
+    int end = calculateIndex(range->end);
+    this->ranges[start][1] = range;
+    this->ranges[end][0] = range;
     for(int i = start + 1; i < end; i++){
-        this->ranges[i][0] = rangePointer;
-        this->ranges[i][1] = rangePointer;
+        this->ranges[i][0] = range;
+        this->ranges[i][1] = range;
     }
     return true; // TODO implement validations for overlap and success of operation
 }
