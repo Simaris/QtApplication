@@ -10,10 +10,14 @@ RangeLookUpStatic<T>::RangeLookUpStatic(int numOfCells, float min, float max){
     this->ranges = new Range<T>**[numOfCells];
     this->nullRange = new Range<T>(0, 0, RangeRoll::Null);
     this->stepSize = (max - min)/numOfCells;
+    this->capacities = static_cast<int*>(malloc(sizeof(int) * numOfCells));
+    this->numOfMembers = static_cast<int*>(malloc(sizeof(int) * numOfCells));
     for(int i = 0; i < numOfCells; i++){
-        this->ranges[i] = static_cast<Range<T>**>(malloc(sizeof(Range<T>*)* 2));
+        this->ranges[i] = static_cast<Range<T>**>(malloc(sizeof(Range<T>*) * 2));
         this->ranges[i][0] = nullRange;
         this->ranges[i][1] = nullRange;
+        this->capacities[i] = 2;
+        this->numOfMembers[i] = 0;
     }
 }
 
@@ -27,6 +31,8 @@ RangeLookUpStatic<T>::~RangeLookUpStatic(){
     for(const Range<T>* range : this->rangePile){
         delete range;
     }
+    free(this->capacities);
+    free(this->numOfMembers);
 }
 
 template<typename T>
@@ -35,11 +41,8 @@ bool RangeLookUpStatic<T>::AddRange(float xA, float xB, T payload){
     rangePile.push_back(range);
     int start = calculateIndex(range->start);
     int end = calculateIndex(range->end);
-    this->ranges[start][1] = range;
-    this->ranges[end][0] = range;
-    for(int i = start + 1; i < end; i++){
-        this->ranges[i][0] = range;
-        this->ranges[i][1] = range;
+    for(int i = start; i <= end; i++){
+        StoreRange(range, i);
     }
     return true; // TODO implement validations for overlap and success of operation
 }
@@ -52,14 +55,12 @@ bool RangeLookUpStatic<T>::Contains(float value){
 template<typename T>
 Range<T>& RangeLookUpStatic<T>::operator[](float value){
     int index = calculateIndex(value);
-    Range<T>* resultA = ranges[index][0];
-    Range<T>* resultB = ranges[index][1];
-    //careful: end >= value and start <= value has an overlap at end == start
-    if(resultA->roll != RangeRoll::Null && resultA->end >= value){
-        return *resultA;
-    }else if(resultB->start <= value){
-        // this check is needed when result A is a Null range
-        return *resultB;
+    for(int i = 0; i < this->numOfMembers[index]; i++){
+        if(this->ranges[index][i]->start <= value && this->ranges[index][i]->end >= value){
+            return *this->ranges[index][i];
+        }else if(this->ranges[index][i]->start > value){
+            return *this->nullRange;
+        }
     }
     return *nullRange;
 }

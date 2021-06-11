@@ -2,7 +2,7 @@
 #include "RangeLookUpStatic.h"
 
 
-BezierCurve::BezierCurve(QPainter* mpainter, const QPoint mpoints[6], const QPoint mhandlers[5]) : rangeHandler(100, 0, 100){
+BezierCurve::BezierCurve(QPainter* mpainter, const QPoint mpoints[6], const QPoint mhandlers[5]) : rangeHandler(5, 0, 100){
     painter = mpainter;
     points = mpoints;
     handlers = mhandlers;
