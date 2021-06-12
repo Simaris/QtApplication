@@ -19,7 +19,6 @@ public:
     explicit RenderArea(QWidget *parent = nullptr);
     QSize minimumSizeHint() const override;
     QSize sizeHint() const override;
-    int stepSize = 1;
     QLabel* label;
 
 protected:
@@ -29,7 +28,6 @@ protected:
     void mouseReleaseEvent(QMouseEvent *event) override;
 
 private:
-    Shape shape;
     QPen pen;
     int step = 0;
     const int offset = 10;

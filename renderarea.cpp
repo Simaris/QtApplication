@@ -109,6 +109,4 @@ void RenderArea::paintEvent(QPaintEvent * /* event */)
     painter.drawPoint(step, queryPointY);
     painter.restore();
     label->setText(std::to_string(100 - queryPointY).c_str());
-    //step += stepSize;
-    
 }
