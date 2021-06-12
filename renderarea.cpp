@@ -34,7 +34,9 @@ void RenderArea::mousePressEvent(QMouseEvent *){
 }
 
 void RenderArea::mouseMoveEvent(QMouseEvent *event){
-    step = event->pos().x();
+    step = event->pos().x() - offset;
+    step = std::min(step, 100);
+    step = std::max(0, step);
     this->update();
 }
 
@@ -66,7 +68,7 @@ void RenderArea::paintEvent(QPaintEvent * /* event */)
         QPoint(0, 100)
     };
 
-    const int offset = 10;
+    
     QPainter painter(this);
     painter.setPen(pen);
 
@@ -106,6 +108,7 @@ void RenderArea::paintEvent(QPaintEvent * /* event */)
     painter.translate(offset, offset);
     painter.drawPoint(step, queryPointY);
     painter.restore();
+    label->setText(std::to_string(100 - queryPointY).c_str());
     //step += stepSize;
-    step = std::min(step, 100);
+    
 }

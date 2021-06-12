@@ -5,6 +5,7 @@
 #include <QPen>
 #include <QPixmap>
 #include <QWidget>
+#include <QtWidgets>
 
 //! [0]
 class RenderArea : public QWidget
@@ -19,6 +20,7 @@ public:
     QSize minimumSizeHint() const override;
     QSize sizeHint() const override;
     int stepSize = 1;
+    QLabel* label;
 
 protected:
     void paintEvent(QPaintEvent *event) override;
@@ -30,6 +32,7 @@ private:
     Shape shape;
     QPen pen;
     int step = 0;
+    const int offset = 10;
 };
 //! [0]
 
