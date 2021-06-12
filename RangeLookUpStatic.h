@@ -6,8 +6,7 @@
 
 
 /// todo:
-/// each Range* cell can only store 2 Pointers;
-///     Range overlap is not handled
+/// Range overlap is not handled
 /// RangeCoverage is not guaranteed to be "dense"
 enum class RangeRoll{
     Normal,
@@ -51,7 +50,7 @@ class RangeLookUpStatic {
     RangeLookUpStatic() = delete;
     RangeLookUpStatic(int numOfCells, float min, float max);
     ~RangeLookUpStatic();
-    bool AddRange(float, float, T);
+    bool AddRange(float start, float end, T payload);
     bool Contains(float value);
     Range<T>& operator [](float value);
 

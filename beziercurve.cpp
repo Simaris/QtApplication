@@ -2,12 +2,8 @@
 #include "RangeLookUpStatic.h"
 
 
-BezierCurve::BezierCurve(QPainter* mpainter, const QPoint mpoints[6], const QPoint mhandlers[5]) : rangeHandler(5, 0, 100){
-    painter = mpainter;
-    points = mpoints;
-    handlers = mhandlers;
+BezierCurve::BezierCurve(const QPoint mpoints[6], const QPoint mhandlers[5]) : rangeHandler(5, 0, 100){
     numOfPoints = 6;
-    cache = 0;
     rangeHandler.AddRange(mpoints[0].x(), mpoints[1].x(), std::tuple<QPoint, QPoint, QPoint>(mpoints[0], mpoints[1], mhandlers[0]));
     rangeHandler.AddRange(mpoints[1].x(), mpoints[2].x(), std::tuple<QPoint, QPoint, QPoint>(mpoints[1], mpoints[2], mhandlers[1]));
     rangeHandler.AddRange(mpoints[2].x(), mpoints[3].x(), std::tuple<QPoint, QPoint, QPoint>(mpoints[2], mpoints[3], mhandlers[2]));

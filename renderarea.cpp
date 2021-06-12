@@ -5,8 +5,9 @@
 #include <QPainterPath>
 #include <QTime>
 #include <QTimer>
-#include <iostream>
+#include <string>
 #include <QMouseEvent>
+#include <QLabel>
 
 RenderArea::RenderArea(QWidget *parent)
     : QWidget(parent)
@@ -73,7 +74,7 @@ void RenderArea::paintEvent(QPaintEvent * /* event */)
     int queryPointY;
     int lastX = points[0].x();  // cache for position from last iteration
     int lastY = points[0].y();
-    BezierCurve bezierCurve(&painter, points, handlers);
+    BezierCurve bezierCurve(points, handlers);
     for(int x = 0; x <= 100; x++){
         painter.save();
         painter.translate(offset, offset);

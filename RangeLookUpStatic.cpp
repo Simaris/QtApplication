@@ -38,7 +38,7 @@ RangeLookUpStatic<T>::~RangeLookUpStatic(){
 template<typename T>
 bool RangeLookUpStatic<T>::AddRange(float xA, float xB, T payload){
     Range<T>* range = new Range<T>(xA, xB, RangeRoll::Normal, payload);
-    rangePile.push_back(range);
+    this->rangePile.push_back(range);
     int start = calculateIndex(range->start);
     int end = calculateIndex(range->end);
     for(int i = start; i <= end; i++){
@@ -62,7 +62,7 @@ Range<T>& RangeLookUpStatic<T>::operator[](float value){
             return *this->nullRange;
         }
     }
-    return *nullRange;
+    return *this->nullRange;
 }
 
 #endif
