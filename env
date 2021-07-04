@@ -1,4 +1,3 @@
 #!/bin/bash
-export PATH=/usr/bin/Qt/5.15.2/gcc_64/bin:$PATH
-export QT_QPA_PLATFORM=wayland
+export PATH=/usr/share/Qt/5.15.2/gcc_64/bin:$PATH
 

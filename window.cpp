@@ -21,3 +21,7 @@ Window::Window()
     setLayout(mainLayout);
     setWindowTitle(tr("QT Gui"));
 }
+
+float Window::gainCurrentModifier(){
+    return renderArea->gainCurrentModifier();
+}

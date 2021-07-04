@@ -4,3 +4,4 @@ Makefile
 gui
 *.o
 moc_*
+env

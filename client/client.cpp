@@ -1,0 +1,131 @@
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <netdb.h>
+#include <arpa/inet.h>
+#include <client.h>
+#include <QApplication>
+#include <QtWidgets>
+#include <string>
+#include <unistd.h>
+
+
+int get_socket(addrinfo * res, addrinfo * &p){
+    int sockfd;
+    for(p = res; p != NULL; p= p->ai_next){
+        if((sockfd = socket(p->ai_family, p->ai_socktype, p->ai_protocol)) == -1){
+            continue;
+        }
+        return sockfd;
+    }
+    fprintf(stderr, "talker: failed to create socket\n");
+    return 2;
+}
+
+Client::Client(){
+    label = new QLabel(this);
+    QLineEdit * lineEdit = new QLineEdit(this);
+    QPushButton * sendButton = new QPushButton(this);
+    label->setText(std::to_string(number).c_str());
+    lineEdit->setText(std::to_string(number).c_str());
+    sendButton->setText("Send");
+    connect(sendButton, &QPushButton::clicked, this, QOverload<>::of(&Client::sendNumber));
+    mainLayout = new QGridLayout;
+    mainLayout->addWidget(label);
+    mainLayout->addWidget(lineEdit);
+    mainLayout->addWidget(sendButton);
+    setLayout(mainLayout);
+    prepareNetworking();
+}
+
+Client::~Client(){
+    freeaddrinfo(res);
+    ::close(socketfd);
+    delete mainLayout;
+}
+
+QSize Client::minimumSizeHint() const{
+    return QSize(100, 100);
+}
+
+QSize Client::sizeHint() const{
+    return QSize(400, 200);
+}
+
+void Client::sendNumber(){
+    int len, bytes_sent;
+    buffer = reinterpret_cast<char *> (&number);
+    bytes_sent = sendto(socketfd, buffer, sizeof(float), 0, sendtoinfo->ai_addr, sendtoinfo->ai_addrlen);
+    waitForAnswer();
+}
+
+void Client::prepareNetworking(){
+    int status;
+    addrinfo hints;
+    memset(&hints, 0, sizeof hints);
+    hints.ai_family = AF_UNSPEC;
+    hints.ai_socktype = SOCK_DGRAM;
+    hints.ai_flags = AI_PASSIVE;
+    status = getaddrinfo(NULL, "3490", &hints, &res);
+    socketfd = get_socket(res, sendtoinfo);
+    prepareAnswerNetworking();
+}
+
+void Client::prepareAnswerNetworking(){
+    struct addrinfo hints, *servinfo, *p;
+    int rv;
+    memset(&hints, 0, sizeof hints);
+    hints.ai_family = AF_UNSPEC;
+    hints.ai_socktype = SOCK_DGRAM;
+    hints.ai_flags = AI_PASSIVE; // use my IP
+
+    if ((rv = getaddrinfo(NULL, "8999", &hints, &servinfo)) != 0) {
+        fprintf(stderr, "getaddrinfo: %s\n", gai_strerror(rv));
+        return;
+    }  
+
+    // loop through all the results and bind to the first we can
+    for(p = servinfo; p != NULL; p = p->ai_next) {
+        if ((socketfd_answer = socket(p->ai_family, p->ai_socktype,
+                p->ai_protocol)) == -1) {
+            perror("server: socket");
+            continue;
+        }
+
+        if (bind(socketfd_answer, p->ai_addr, p->ai_addrlen) == -1) {
+            ::close(socketfd_answer);
+            perror("server: bind");
+            continue;
+        }
+        break;
+    }
+
+    freeaddrinfo(servinfo);
+    if (p == NULL)  {
+        fprintf(stderr, "server: failed to bind\n");
+        exit(1);
+    }
+}
+
+void Client::waitForAnswer(){
+    int numbytes;
+    struct sockaddr_storage their_addr;
+    char s[INET6_ADDRSTRLEN];
+    socklen_t addr_len = sizeof their_addr;
+    if((numbytes = recvfrom(socketfd_answer, buffer, sizeof(float), 0, (struct sockaddr *) &their_addr, &addr_len)) == -1){
+        return;
+    }
+    buffer[numbytes] = '\0';
+    float ans_value = *((float*)buffer);
+    char msg[50];
+    sprintf(msg, "value: %f\n", ans_value);
+    label->setText(msg);
+    return;
+}
+
+int main(int argc, char** argv){
+    QApplication app(argc, argv);
+    Client client;
+    client.show();
+    return app.exec();
+}

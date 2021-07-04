@@ -29,19 +29,27 @@ QSize RenderArea::sizeHint() const
     return QSize(400, 200);
 }
 
-void RenderArea::mousePressEvent(QMouseEvent *){
+void RenderArea::mousePressEvent(QMouseEvent *)
+{
     this->setMouseTracking(true);
 }
 
-void RenderArea::mouseMoveEvent(QMouseEvent *event){
+void RenderArea::mouseMoveEvent(QMouseEvent *event)
+{
     step = event->pos().x() - offset;
     step = std::min(step, 100);
     step = std::max(0, step);
     this->update();
 }
 
-void RenderArea::mouseReleaseEvent(QMouseEvent *){
+void RenderArea::mouseReleaseEvent(QMouseEvent *)
+{
     this->setMouseTracking(false);
+}
+
+float RenderArea::gainCurrentModifier()
+{
+    return 1.0f;
 }
 
 void RenderArea::paintEvent(QPaintEvent * /* event */)

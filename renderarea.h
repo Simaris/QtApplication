@@ -20,6 +20,7 @@ public:
     QSize minimumSizeHint() const override;
     QSize sizeHint() const override;
     QLabel* label;
+    float gainCurrentModifier();
 
 protected:
     void paintEvent(QPaintEvent *event) override;

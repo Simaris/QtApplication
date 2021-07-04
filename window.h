@@ -12,6 +12,7 @@ class Window : public QWidget
 
 public:
     Window();
+    float gainCurrentModifier();
 
 private:
     RenderArea *renderArea;
