@@ -13,14 +13,12 @@ class Client : public QWidget{
     protected:
         void sendNumber();
         void prepareNetworking();
-        void prepareAnswerNetworking();
         void waitForAnswer();
 
     private:
         QGridLayout * mainLayout;
         float number = 0.5f;
         int socketfd;
-        int socketfd_answer;
         addrinfo * sendtoinfo, * res;
         char* buffer;
         QLabel * label;

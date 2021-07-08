@@ -68,43 +68,6 @@ void Client::prepareNetworking(){
     hints.ai_flags = AI_PASSIVE;
     status = getaddrinfo(NULL, "3490", &hints, &res);
     socketfd = get_socket(res, sendtoinfo);
-    prepareAnswerNetworking();
-}
-
-void Client::prepareAnswerNetworking(){
-    struct addrinfo hints, *servinfo, *p;
-    int rv;
-    memset(&hints, 0, sizeof hints);
-    hints.ai_family = AF_UNSPEC;
-    hints.ai_socktype = SOCK_DGRAM;
-    hints.ai_flags = AI_PASSIVE; // use my IP
-
-    if ((rv = getaddrinfo(NULL, "8999", &hints, &servinfo)) != 0) {
-        fprintf(stderr, "getaddrinfo: %s\n", gai_strerror(rv));
-        return;
-    }  
-
-    // loop through all the results and bind to the first we can
-    for(p = servinfo; p != NULL; p = p->ai_next) {
-        if ((socketfd_answer = socket(p->ai_family, p->ai_socktype,
-                p->ai_protocol)) == -1) {
-            perror("server: socket");
-            continue;
-        }
-
-        if (bind(socketfd_answer, p->ai_addr, p->ai_addrlen) == -1) {
-            ::close(socketfd_answer);
-            perror("server: bind");
-            continue;
-        }
-        break;
-    }
-
-    freeaddrinfo(servinfo);
-    if (p == NULL)  {
-        fprintf(stderr, "server: failed to bind\n");
-        exit(1);
-    }
 }
 
 void Client::waitForAnswer(){
@@ -112,7 +75,7 @@ void Client::waitForAnswer(){
     struct sockaddr_storage their_addr;
     char s[INET6_ADDRSTRLEN];
     socklen_t addr_len = sizeof their_addr;
-    if((numbytes = recvfrom(socketfd_answer, buffer, sizeof(float), 0, (struct sockaddr *) &their_addr, &addr_len)) == -1){
+    if((numbytes = recvfrom(socketfd, buffer, sizeof(float), 0, (struct sockaddr *) &their_addr, &addr_len)) == -1){
         return;
     }
     buffer[numbytes] = '\0';

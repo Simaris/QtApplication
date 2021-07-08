@@ -71,34 +71,33 @@ Server::Server(){
 bool Server::receive(){
     int numbytes;
     struct sockaddr_storage their_addr;
-    char s[INET6_ADDRSTRLEN];
     socklen_t addr_len = sizeof their_addr;
     if((numbytes = recvfrom(sockfd, buffer, sizeof(float), 0, (struct sockaddr *) &their_addr, &addr_len)) == -1){
         return false;
     }
-    inet_ntop(their_addr.ss_family,
-        get_in_addr((struct sockaddr *)&their_addr),
-        s, sizeof s);
     buffer[numbytes] = '\0';
-    answer_queue.push_back((struct sockaddr *)&their_addr);
+    answer_queue.push_back(*((struct sockaddr*) &their_addr));
     return true;
 }
 
 void Server::answer(){
     int status;
-    addrinfo hints, *res, *p;
-    int socketfd_answer;
-    memset(&hints, 0, sizeof hints);
-    hints.ai_family = AF_UNSPEC;
-    hints.ai_socktype = SOCK_DGRAM;
-    hints.ai_flags = AI_PASSIVE;
-    status = getaddrinfo(NULL, "8999", &hints, &res); // TODO actually use answer_queue; do not use hardcoded values
-    socketfd_answer = get_socket(res, p);
-    // send answer
+    addrinfo *res;
+    sockaddr_in * address_storage = (sockaddr_in *) &answer_queue.back();
+    res = (addrinfo*)malloc(sizeof(addrinfo));
+    res->ai_flags = AI_PASSIVE;
+    res->ai_family = AF_INET;
+    res->ai_socktype = SOCK_DGRAM;
+    res->ai_protocol = 17;
+    res->ai_addrlen = sizeof(sockaddr_in);
+    res->ai_addr = (sockaddr*)address_storage;
+    res->ai_canonname = NULL;
+    res->ai_next = NULL;
     int bytes_sent;
     float send_number = 1.0f; // send number here
     char * buffer = reinterpret_cast<char *> (&send_number); 
-    bytes_sent = sendto(socketfd_answer, buffer, sizeof(float), 0, p->ai_addr, p->ai_addrlen);
+    bytes_sent = sendto(sockfd, buffer, sizeof(float), 0, res->ai_addr, res->ai_addrlen);
+    answer_queue.pop_back();  // since I need address_storage as a pointer this has to be popped at the end
 }
 
 float Server::readNumber(){

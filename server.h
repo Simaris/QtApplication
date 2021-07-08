@@ -12,5 +12,5 @@ class Server{
     private:
         int sockfd;
         char buffer[MSG_MAX_LENGTH];
-        std::vector<sockaddr*> answer_queue;
+        std::vector<sockaddr> answer_queue;
 };
