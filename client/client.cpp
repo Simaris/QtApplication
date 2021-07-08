@@ -74,11 +74,11 @@ void Client::waitForAnswer(){
     int numbytes;
     struct sockaddr_storage their_addr;
     socklen_t addr_len = sizeof their_addr;
-    if((numbytes = recvfrom(socketfd, buffer, sizeof(float), 0, (struct sockaddr *) &their_addr, &addr_len)) == -1){
+    char ans_buffer[sizeof(float)];
+    if((numbytes = recvfrom(socketfd, ans_buffer, sizeof(float), 0, (struct sockaddr *) &their_addr, &addr_len)) == -1){
         return;
     }
-    buffer[numbytes] = '\0';
-    float ans_value = *((float*)buffer);
+    float ans_value = *((float*)ans_buffer);
     char msg[50];
     sprintf(msg, "%f\n", ans_value);
     number = ans_value;
