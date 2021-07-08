@@ -24,7 +24,7 @@ int get_socket(addrinfo * res, addrinfo * &p){
 
 Client::Client(){
     label = new QLabel(this);
-    QLineEdit * lineEdit = new QLineEdit(this);
+    lineEdit = new QLineEdit(this);
     QPushButton * sendButton = new QPushButton(this);
     label->setText(std::to_string(number).c_str());
     lineEdit->setText(std::to_string(number).c_str());
@@ -54,6 +54,7 @@ QSize Client::sizeHint() const{
 
 void Client::sendNumber(){
     int len, bytes_sent;
+    number = lineEdit->text().toFloat();
     buffer = reinterpret_cast<char *> (&number);
     bytes_sent = sendto(socketfd, buffer, sizeof(float), 0, sendtoinfo->ai_addr, sendtoinfo->ai_addrlen);
     waitForAnswer();
@@ -81,8 +82,10 @@ void Client::waitForAnswer(){
     buffer[numbytes] = '\0';
     float ans_value = *((float*)buffer);
     char msg[50];
-    sprintf(msg, "value: %f\n", ans_value);
+    sprintf(msg, "%f\n", ans_value);
+    number = ans_value;
     label->setText(msg);
+    lineEdit->setText(std::to_string(number).c_str());
     return;
 }
 

@@ -22,4 +22,5 @@ class Client : public QWidget{
         addrinfo * sendtoinfo, * res;
         char* buffer;
         QLabel * label;
+        QLineEdit * lineEdit;
 };
