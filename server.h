@@ -7,7 +7,7 @@ class Server{
         Server();
         ~Server();
         bool receive();
-        void answer();
+        void answer(float);
         float readNumber();
     private:
         int sockfd;

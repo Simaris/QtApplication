@@ -32,6 +32,7 @@ private:
     QPen pen;
     int step = 0;
     const int offset = 10;
+    int currentModifier = 0;
 };
 //! [0]
 

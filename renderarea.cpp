@@ -49,7 +49,7 @@ void RenderArea::mouseReleaseEvent(QMouseEvent *)
 
 float RenderArea::gainCurrentModifier()
 {
-    return 1.0f;
+    return (float)(100 - currentModifier)/100;
 }
 
 void RenderArea::paintEvent(QPaintEvent * /* event */)
@@ -81,7 +81,6 @@ void RenderArea::paintEvent(QPaintEvent * /* event */)
     painter.setPen(pen);
 
     // draw bezier line and (on the side) calculate y value on the bezier line
-    int queryPointY;
     int lastX = points[0].x();  // cache for position from last iteration
     int lastY = points[0].y();
     BezierCurve bezierCurve(points, handlers);
@@ -93,7 +92,7 @@ void RenderArea::paintEvent(QPaintEvent * /* event */)
         lastX = x;
         lastY = bezierCurve.GetCurvePoint(x);
         if(step == x){
-            queryPointY = lastY;
+            currentModifier = lastY;
         }
         painter.restore();
     }
@@ -110,11 +109,11 @@ void RenderArea::paintEvent(QPaintEvent * /* event */)
     painter.setPen(QPen(Qt::blue, 10, style, cap, join));
     painter.save();
     painter.translate(offset + 150, offset);
-    painter.drawPoint(0, queryPointY);
+    painter.drawPoint(0, currentModifier);
     painter.restore();
     painter.save();
     painter.translate(offset, offset);
-    painter.drawPoint(step, queryPointY);
+    painter.drawPoint(step, currentModifier);
     painter.restore();
-    label->setText(std::to_string(100 - queryPointY).c_str());
+    label->setText(std::to_string(100 - currentModifier).c_str());
 }

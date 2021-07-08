@@ -53,28 +53,26 @@ QSize Client::sizeHint() const{
 }
 
 void Client::sendNumber(){
-    int len, bytes_sent;
-    number = lineEdit->text().toFloat();
+    QLocale converter(QLocale::German);
+    number = converter.toFloat(lineEdit->text());
     buffer = reinterpret_cast<char *> (&number);
-    bytes_sent = sendto(socketfd, buffer, sizeof(float), 0, sendtoinfo->ai_addr, sendtoinfo->ai_addrlen);
+    sendto(socketfd, buffer, sizeof(float), 0, sendtoinfo->ai_addr, sendtoinfo->ai_addrlen);
     waitForAnswer();
 }
 
 void Client::prepareNetworking(){
-    int status;
     addrinfo hints;
     memset(&hints, 0, sizeof hints);
     hints.ai_family = AF_UNSPEC;
     hints.ai_socktype = SOCK_DGRAM;
     hints.ai_flags = AI_PASSIVE;
-    status = getaddrinfo(NULL, "3490", &hints, &res);
+    getaddrinfo(NULL, "3490", &hints, &res);
     socketfd = get_socket(res, sendtoinfo);
 }
 
 void Client::waitForAnswer(){
     int numbytes;
     struct sockaddr_storage their_addr;
-    char s[INET6_ADDRSTRLEN];
     socklen_t addr_len = sizeof their_addr;
     if((numbytes = recvfrom(socketfd, buffer, sizeof(float), 0, (struct sockaddr *) &their_addr, &addr_len)) == -1){
         return;

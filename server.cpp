@@ -80,8 +80,7 @@ bool Server::receive(){
     return true;
 }
 
-void Server::answer(){
-    int status;
+void Server::answer(float modifier){
     addrinfo *res;
     sockaddr_in * address_storage = (sockaddr_in *) &answer_queue.back();
     res = (addrinfo*)malloc(sizeof(addrinfo));
@@ -93,10 +92,9 @@ void Server::answer(){
     res->ai_addr = (sockaddr*)address_storage;
     res->ai_canonname = NULL;
     res->ai_next = NULL;
-    int bytes_sent;
-    float send_number = 1.0f; // send number here
-    char * buffer = reinterpret_cast<char *> (&send_number); 
-    bytes_sent = sendto(sockfd, buffer, sizeof(float), 0, res->ai_addr, res->ai_addrlen);
+    float answer = modifier * *(float *)buffer;
+    char * answer_bytes = reinterpret_cast<char *> (&answer); 
+    sendto(sockfd, answer_bytes, sizeof(float), 0, res->ai_addr, res->ai_addrlen);
     answer_queue.pop_back();  // since I need address_storage as a pointer this has to be popped at the end
 }
 
@@ -105,6 +103,5 @@ float Server::readNumber(){
 }
 
 Server::~Server(){
-    delete[] buffer;
     close(sockfd);
 }
