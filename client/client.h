@@ -23,4 +23,5 @@ class Client : public QWidget{
         char* buffer;
         QLabel * label;
         QLineEdit * lineEdit;
+        QPushButton * sendButton;
 };

@@ -26,7 +26,7 @@ RangeLookUpStatic<T>::~RangeLookUpStatic(){
     for(int i = 0; i < numOfCells; i++){
         free(this->ranges[i]);
     }
-    delete this->ranges;
+    delete[] this->ranges;
     delete this->nullRange;
     for(const Range<T>* range : this->rangePile){
         delete range;

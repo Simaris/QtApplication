@@ -1,0 +1,4 @@
+common commands:
+valgrind --leak-check=yes --num-callers=50 --default-suppressions=yes --gen-suppressions=all --suppressions=/home/cabu/Projects/GuiTest/client/client.supp ./gui 2>memanalys
+or
+valgrind --leak-check=yes --num-callers=50 --default-suppressions=yes --gen-suppressions=all --suppressions=/home/cabu/Projects/GuiTest/client/client.supp ./client 2>memanalys

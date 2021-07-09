@@ -25,7 +25,7 @@ int get_socket(addrinfo * res, addrinfo * &p){
 Client::Client(){
     label = new QLabel(this);
     lineEdit = new QLineEdit(this);
-    QPushButton * sendButton = new QPushButton(this);
+    sendButton = new QPushButton(this);
     label->setText(std::to_string(number).c_str());
     lineEdit->setText(std::to_string(number).c_str());
     sendButton->setText("Send");
@@ -41,6 +41,9 @@ Client::Client(){
 Client::~Client(){
     freeaddrinfo(res);
     ::close(socketfd);
+    delete label;
+    delete lineEdit;
+    delete sendButton;
     delete mainLayout;
 }
 

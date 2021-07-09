@@ -1,0 +1,42 @@
+{
+   <Addr16>
+   Memcheck:Addr16
+   ...
+   fun:_ZN19QApplicationPrivate4initEv
+   ...
+}
+
+{
+   <Addr8>
+   Memcheck:Addr8
+   ...
+   fun:_ZN19QApplicationPrivate4initEv
+   ...
+}
+
+{
+   <leak-definite>
+   Memcheck:Leak
+   match-leak-kinds: all
+   ...
+   fun:_ZN19QApplicationPrivate4initEv
+   ...
+}
+
+{
+   <LineEdit>
+   Memcheck:Leak
+   match-leak-kinds: all
+   ...
+   fun:_ZN9QLineEditC1EP7QWidget
+   ...
+}
+
+{
+   <Set Visible>
+   Memcheck:Leak
+   match-leak-kinds: all
+   ...
+   fun:_ZN14QWidgetPrivate10setVisibleEb
+   ...
+}

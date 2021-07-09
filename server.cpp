@@ -66,12 +66,21 @@ Server::Server(){
         fprintf(stderr, "server: failed to bind\n");
         exit(1);
     }
+
+    pfds[0].fd = sockfd;
+    pfds[0].events = POLLIN;
 }
 
 bool Server::receive(){
     int numbytes;
     struct sockaddr_storage their_addr;
     socklen_t addr_len = sizeof their_addr;
+    if(poll(pfds, 1, 1000) == 0){
+        return false;
+    }
+    if((pfds[0].revents & POLLIN) <= 0){
+        return false;
+    }
     if((numbytes = recvfrom(sockfd, buffer, sizeof(float), 0, (struct sockaddr *) &their_addr, &addr_len)) == -1){
         return false;
     }
@@ -96,6 +105,7 @@ void Server::answer(float modifier){
     char * answer_bytes = reinterpret_cast<char *> (&answer); 
     sendto(sockfd, answer_bytes, sizeof(float), 0, res->ai_addr, res->ai_addrlen);
     answer_queue.pop_back();  // since I need address_storage as a pointer this has to be popped at the end
+    free(res);
 }
 
 float Server::readNumber(){

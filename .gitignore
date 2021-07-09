@@ -5,3 +5,4 @@ gui
 *.o
 moc_*
 env
+memanalys
